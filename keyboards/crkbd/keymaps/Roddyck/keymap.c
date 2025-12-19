@@ -165,3 +165,48 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
   [3] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_MPRV, KC_MNXT), ENCODER_CCW_CW(RM_VALD, RM_VALU), ENCODER_CCW_CW(KC_RGHT, KC_LEFT), },
 };
 #endif
+
+#ifdef OLED_ENABLE
+static void render_status(void) {
+    oled_write_P(PSTR("Layer\n"), false);
+
+    switch (get_highest_layer(layer_state)) {
+        case _BASE:
+            oled_write_P(PSTR("BASE\n"), false);
+            break;
+        case _QWERTY:
+            oled_write_P(PSTR("QWERTY\n"), false);
+            break;
+        case _NAV:
+            oled_write_P(PSTR("NAV\n"), false);
+            break;
+        case _SYM:
+            oled_write_P(PSTR("SYM\n"), false);
+            break;
+        case _NUM:
+            oled_write_P(PSTR("NUM\n"), false);
+            break;
+        case _FUN:
+            oled_write_P(PSTR("FUN\n"), false);
+            break;
+        case _MOUSE:
+            oled_write_P(PSTR("MOUSE\n"), false);
+            break;
+        case _MEDIA:
+            oled_write_P(PSTR("MEDIA\n"), false);
+            break;
+        default:
+            oled_write_P(PSTR("Undef\n"), false);
+            break;
+    }
+}
+
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    return OLED_ROTATION_270;
+}
+
+bool oled_task_user(void) {
+    render_status();
+    return false;
+}
+#endif
