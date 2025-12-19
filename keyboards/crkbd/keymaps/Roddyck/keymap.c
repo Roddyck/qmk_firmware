@@ -18,14 +18,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include QMK_KEYBOARD_H
 
-#define ALT_Z MT(MOD_LALT, KC_Z)
-#define META_X MT(MOD_LGUI, KC_X)
-#define CTL_C MT(MOD_LCTL, KC_C)
-#define SFT_D MT(MOD_LSFT, KC_D)
-#define SFT_H MT(MOD_LSFT, KC_H)
-#define CTL_COMM MT(MOD_LCTL, KC_COMM)
-#define META_DOT MT(MOD_LGUI, KC_DOT)
-#define ALT_SLSH MT(MOD_LALT, KC_SLSH)
+#define ANIM_INVERT false
+#define ANIM_RENDER_WPM true
+#define FAST_TYPE_WPM 45 //Switch to fast animation when over words per minute
+
+#ifdef OLED_ENABLE
+#include "crab.c"
+#endif
 
 enum layer_names {
      _BASE,
@@ -167,46 +166,63 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 #endif
 
 #ifdef OLED_ENABLE
-static void render_status(void) {
-    oled_write_P(PSTR("Layer\n"), false);
+//static void render_status(void) {
+//    oled_write_P(PSTR("Layer\n"), false);
+//
+//    switch (get_highest_layer(layer_state)) {
+//        case _BASE:
+//            oled_write_P(PSTR("BASE\n"), false);
+//            break;
+//        case _QWERTY:
+//            oled_write_P(PSTR("QWERTY\n"), false);
+//            break;
+//        case _NAV:
+//            oled_write_P(PSTR("NAV\n"), false);
+//            break;
+//        case _SYM:
+//            oled_write_P(PSTR("SYM\n"), false);
+//            break;
+//        case _NUM:
+//            oled_write_P(PSTR("NUM\n"), false);
+//            break;
+//        case _FUN:
+//            oled_write_P(PSTR("FUN\n"), false);
+//            break;
+//        case _MOUSE:
+//            oled_write_P(PSTR("MOUSE\n"), false);
+//            break;
+//        case _MEDIA:
+//            oled_write_P(PSTR("MEDIA\n"), false);
+//            break;
+//        default:
+//            oled_write_P(PSTR("Undef\n"), false);
+//            break;
+//    }
+//}
 
-    switch (get_highest_layer(layer_state)) {
-        case _BASE:
-            oled_write_P(PSTR("BASE\n"), false);
-            break;
-        case _QWERTY:
-            oled_write_P(PSTR("QWERTY\n"), false);
-            break;
-        case _NAV:
-            oled_write_P(PSTR("NAV\n"), false);
-            break;
-        case _SYM:
-            oled_write_P(PSTR("SYM\n"), false);
-            break;
-        case _NUM:
-            oled_write_P(PSTR("NUM\n"), false);
-            break;
-        case _FUN:
-            oled_write_P(PSTR("FUN\n"), false);
-            break;
-        case _MOUSE:
-            oled_write_P(PSTR("MOUSE\n"), false);
-            break;
-        case _MEDIA:
-            oled_write_P(PSTR("MEDIA\n"), false);
-            break;
-        default:
-            oled_write_P(PSTR("Undef\n"), false);
-            break;
-    }
+static void render_logo(void) {
+    static const char PROGMEM crkbd_logo[] = {
+        0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, 0x90, 0x91, 0x92, 0x93, 0x94,
+        0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb0, 0xb1, 0xb2, 0xb3, 0xb4,
+        0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4,
+    0};
+    oled_write_P(crkbd_logo, false);
 }
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-    return OLED_ROTATION_270;
+    if (!is_keyboard_master()) {
+        return OLED_ROTATION_180;
+    }
+
+    return rotation;
 }
 
 bool oled_task_user(void) {
-    render_status();
+    if (is_keyboard_master()) {
+        oled_render_anim();
+    } else {
+        render_logo();
+    }
     return false;
 }
 #endif
