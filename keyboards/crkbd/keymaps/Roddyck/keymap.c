@@ -119,7 +119,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_GRV, KC_AMPR,   KC_1,    KC_2,    KC_3, KC_BSLS,                      XXXXXXX, KC_RSFT,  KC_RCTL, KC_RGUI, KC_RALT, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_DOT,  KC_0, KC_UNDS,     XXXXXXX, _______, XXXXXXX
+                                          KC_DOT,  KC_0, KC_MINS,     XXXXXXX, _______, XXXXXXX
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -166,7 +166,7 @@ static void render_status(void) {
             oled_write_P(PSTR("BASE\n"), false);
             break;
         case _QWERTY:
-            oled_write_P(PSTR("QWERTY\n"), false);
+            oled_write_P(PSTR("QWERT\n"), false);
             break;
         case _NAV:
             oled_write_P(PSTR("NAV\n"), false);
