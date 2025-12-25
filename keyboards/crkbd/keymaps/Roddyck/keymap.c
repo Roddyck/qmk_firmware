@@ -17,6 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include QMK_KEYBOARD_H
+#define ANIM_INVERT false
+#define ANIM_RENDER_WPM true
+#define FAST_TYPE_WPM 45 //Switch to fast animation when over words per minute
+
+#ifdef OLED_ENABLE
+#include "crab.c"
+#endif
 
 enum layer_names {
      _BASE,
@@ -158,39 +165,39 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 #endif
 
 #ifdef OLED_ENABLE
-static void render_status(void) {
-    oled_write_P(PSTR("Layer\n"), false);
-
-    switch (get_highest_layer(layer_state)) {
-        case _BASE:
-            oled_write_P(PSTR("BASE\n"), false);
-            break;
-        case _QWERTY:
-            oled_write_P(PSTR("QWERT\n"), false);
-            break;
-        case _NAV:
-            oled_write_P(PSTR("NAV\n"), false);
-            break;
-        case _SYM:
-            oled_write_P(PSTR("SYM\n"), false);
-            break;
-        case _NUM:
-            oled_write_P(PSTR("NUM\n"), false);
-            break;
-        case _FUN:
-            oled_write_P(PSTR("FUN\n"), false);
-            break;
-        case _MOUSE:
-            oled_write_P(PSTR("MOUSE\n"), false);
-            break;
-        case _MEDIA:
-            oled_write_P(PSTR("MEDIA\n"), false);
-            break;
-        default:
-            oled_write_P(PSTR("Undef\n"), false);
-            break;
-    }
-}
+//static void render_status(void) {
+//    oled_write_P(PSTR("Layer\n"), false);
+//
+//    switch (get_highest_layer(layer_state)) {
+//        case _BASE:
+//            oled_write_P(PSTR("BASE\n"), false);
+//            break;
+//        case _QWERTY:
+//            oled_write_P(PSTR("QWERT\n"), false);
+//            break;
+//        case _NAV:
+//            oled_write_P(PSTR("NAV\n"), false);
+//            break;
+//        case _SYM:
+//            oled_write_P(PSTR("SYM\n"), false);
+//            break;
+//        case _NUM:
+//            oled_write_P(PSTR("NUM\n"), false);
+//            break;
+//        case _FUN:
+//            oled_write_P(PSTR("FUN\n"), false);
+//            break;
+//        case _MOUSE:
+//            oled_write_P(PSTR("MOUSE\n"), false);
+//            break;
+//        case _MEDIA:
+//            oled_write_P(PSTR("MEDIA\n"), false);
+//            break;
+//        default:
+//            oled_write_P(PSTR("Undef\n"), false);
+//            break;
+//    }
+//}
 
 static void render_logo(void) {
     static const char PROGMEM crkbd_logo[] = {
@@ -206,12 +213,12 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
         return OLED_ROTATION_180;
     }
 
-    return OLED_ROTATION_270;
+    return rotation;
 }
 
 bool oled_task_user(void) {
     if (is_keyboard_master()) {
-        render_status();
+        oled_render_anim();
     } else {
         render_logo();
     }
